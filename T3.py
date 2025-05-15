@@ -1,13 +1,16 @@
-a,b = map(int,input().split())
-mod_val = 107
-rslt = 1
-a = a % mod_val
+N=int(input())
+output=[] 
+for c in range(N):
+  row=[]
+  for r in range(N):
+    row.append(0)
+  output.append(row)
+for i in range(N):
+    inp = list(map(int, input().split()))
+    n = inp[0]  
+    neighbors = inp[1:]  
+    for k in neighbors:
+        output[i][k] = 1
 
-while b > 0:
-    if b % 2 != 0: 
-        rslt = (rslt * a) % mod_val
-    a = (a**2) % mod_val
-    b = b//2 
-
-
-print(rslt)
+for row in output:
+    print(" ".join(map(str, row)))

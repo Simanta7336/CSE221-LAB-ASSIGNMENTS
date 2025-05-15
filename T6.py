@@ -1,18 +1,12 @@
-def generate_postorder(inorder_seq, preorder_seq):
-    if not inorder_seq or not preorder_seq:
-        return []
-
-    root_node = preorder_seq[0]  
-    root_index = inorder_seq.index(root_node)
-    
-    left_subtree = generate_postorder(inorder_seq[:root_index], preorder_seq[1:root_index+1])
-    right_subtree = generate_postorder(inorder_seq[root_index+1:], preorder_seq[root_index+1:])
-    
-    return left_subtree + right_subtree + [root_node]
-
-num_nodes = int(input())
-inorder_seq = list(map(int, input().split()))
-preorder_seq = list(map(int, input().split()))
-postorder_seq = generate_postorder(inorder_seq, preorder_seq)
-print(' '.join(map(str, postorder_seq)))
-
+siz=int(input())
+x, y = map(int, input().split())
+output=[]
+count=0
+possible=[[x-1,y-1],[x-1,y],[x-1,y+1],[x,y-1],[x,y+1],[x+1,y-1],[x+1,y],[x+1,y+1]]
+for i in possible:
+  if 1<=i[0]<=siz and 1<=i[1]<=siz:
+    output.append(i)
+    count+=1
+print(count)    
+for i in output:
+  print(f"{i[0]} {i[1]}")   

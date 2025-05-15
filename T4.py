@@ -1,21 +1,19 @@
-def calc_power_mod(base, exp, mod):
-    res = 1
-    base = base % mod
-    while exp > 0:
-        if exp % 2 == 1: 
-            res = (res * base) % mod
-        base = (base * base) % mod
-        exp = exp // 2 
-    return res
+N, M = map(int, input().split())
+output={}
+for i in range(1,N+1):
+    output[i]=0
 
-def remainder(base, exponent, modulus):
-    if base == 1:
-        return exponent % modulus
-    temp = calc_power_mod(base, exponent + 1, modulus * (base - 1))
-    final_rem = ((temp - base) // (base - 1)) % modulus
-    return final_rem
-
-num_cases = int(input())
-for i in range(num_cases):
-    base, exponent, modulus = map(int, input().split())
-    print(remainder(base, exponent, modulus))
+arr1 = list(map(int,input().split()))
+arr2 = list(map(int,input().split()))
+for i in arr1:
+    output[i]=output[i]+1
+for i in arr2:
+    output[i]=output[i]+1
+cnt=0
+for k in output.values():
+    if k%2!=0:
+        cnt+=1
+if cnt == 2 or cnt == 0:
+    print("YES")
+else:
+    print("NO")    

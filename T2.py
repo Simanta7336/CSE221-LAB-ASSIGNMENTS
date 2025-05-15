@@ -1,15 +1,18 @@
-N = int(input())
-arr = list(map(int,input().split()))
+N, M = map(int, input().split())
+u= list(map(int, input().split()))
+v= list(map(int, input().split()))
+w= list(map(int, input().split()))
+output=[] 
+for r in range(N):
+  row=[]
+  output.append(row)
 
-def max_pair(arr):
-    mx_val = float('-inf')
-    i = 0  
-    for j in range(1, len(arr)):
-        mx_val = max(mx_val, arr[i] + arr[j]**2)
-        val = max(arr[i], arr[j])
-        i = arr.index(val)
-    
-    return mx_val
+for i in range(M):
+  output[u[i]-1].append((v[i],w[i]))
 
-rslt = max_pair(arr)
-print(rslt)
+for node in range(N):
+    r = node+1
+    temp = ""
+    for l in output[node]:
+        temp += str(l) + " "
+    print(f"{r}: {temp}")
