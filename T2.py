@@ -1,40 +1,46 @@
-from collections import deque
-N, M = map(int, input().split())
+import heapq
+
+def short_dis(N, graph, source):
+    dist = [float('inf')] * (N + 1)
+    dist[source] = 0
+    heap = [(0, source)]
+
+    while heap:
+        cur_dist, u = heapq.heappop(heap)
+
+        if cur_dist > dist[u]:
+            continue
+
+        for v, w in graph[u]:
+            if dist[v] > dist[u] + w:
+                dist[v] = dist[u] + w
+                heapq.heappush(heap, (dist[v], v))
+
+    return dist
+
+N, M, S, T = map(int, input().split())
 graph={}
 for i in range(1,N+1):
-    graph[i]=[]
-for i in range (M):
-    n1, n2 = map(int, input().split())
-    graph[n1].append(n2)
-    graph[n2].append(n1)
+    graph[i]= []
 
-visited = [False] * (N + 1)
-color = [-1] * (N + 1)
+for i in range(M):
+    u, v, w = map(int, input().split())
+    graph[u].append((v, w))
 
-def bfs(start):
-    queue = deque()
-    queue.append(start)
-    color[start] = 0
-    count = [1, 0]  
-    visited[start] = True
+distA = short_dis(N, graph, S)
+distB = short_dis(N, graph, T)
 
-    while queue:
-        node = queue.popleft()
-        for child in graph[node]:
-            if color[child] == -1:
-                color[child] = 1 - color[node]
-                count[color[child]] += 1
-                visited[child] = True
-                queue.append(child)
+min_time = float('inf')
+meeting_node = N+1
 
-    return max(count)
+for v in range(1, N + 1):
+    if distA[v] != float('inf') and distB[v] != float('inf'):
+        meet_time = max(distA[v], distB[v])
+        if meet_time < min_time or (meet_time == min_time and v < meeting_node):
+            min_time = meet_time
+            meeting_node = v
 
-result = 0
-for i in range(1, N + 1):
-    if not visited[i]:
-        result += bfs(i)
-
-print(result)
-
-
-
+if meeting_node == N+1:
+    print(-1)
+else:
+    print(f"{min_time} {meeting_node}")

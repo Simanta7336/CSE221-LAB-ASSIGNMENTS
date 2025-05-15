@@ -1,38 +1,34 @@
-from collections import deque
+import heapq
 
-n = int(input())
-x,y,x1,y1 = map(int,input().split())
+N, M = map(int, input().split())
+graph = [[] for _ in range(N + 1)]
+for i in range(M):
+    u,v,w= map(int, input().split())
+    graph[u].append((v, w))
+    graph[v].append((u, w)) 
 
-def knight(a,b,x1,y1,n):
-    if a == x1 and b == y1:
-        return 0
-    
-    lst = [
-        (2, 1), (2, -1), (-2, 1), (-2, -1),
-        (1, 2), (1, -2), (-1, 2), (-1, -2)
-    ]
+danger = [float('inf')] * (N + 1)
+danger[1] = 0
+heap = [(0, 1)]
 
+while heap:
+    cur_danger, u = heapq.heappop(heap)
 
-    queue = deque()
-    queue.append((a,b))
-    visited = [[-1] * (n + 1) for _ in range(n + 1)]
-    visited[a][b] = 0
+    if cur_danger > danger[u]:
+        continue
 
-    while queue:
-        u = queue.popleft()
-        x,y = u
-        
-        
-        for nx,ny in lst:
-            i,j = x + nx , ny + y
-            if 1 <= i <= n and 1 <= j <= n and  visited[i][j]==-1:
-                visited[i][j] = visited[x][y]+1
-                if i==x1 and j==y1:
-                    return visited[i][j]
-                queue.append((i, j))
-    return -1
+    for v, w in graph[u]:
+        new_danger = max(cur_danger, w)
+        if new_danger < danger[v]:
+            danger[v] = new_danger
+            heapq.heappush(heap, (new_danger, v))
 
-print(knight(x,y,x1,y1,n))
-
+result = []
+for i in range(1, N + 1):
+    if danger[i] == float('inf'):
+        result.append(-1)
+    else:
+        result.append(danger[i])
+print(' '.join(map(str, result)))
 
 

@@ -1,58 +1,52 @@
-def find_order(n):
-    from collections import defaultdict, deque
+import heapq
+import sys
+input = sys.stdin.read
 
-    adj = defaultdict(list)
-    in_deg = defaultdict(int)
-    queue = deque()
-    words = []
-    unique_char = set()
+def sec_short_path(N, M, S, D, edges):
+    graph = [[] for _ in range(N + 1)]
+    
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+        
+    dist = []
+    for i in range(N + 1):
+        dist.append([float('inf'), float('inf')])
 
-    for i in range(n):
-        cur_w = input()
-        words.append(cur_w)
-
-    idx = 0
-    while idx < n - 1:
-        w1 = words[idx]
-        w2 = words[idx + 1]
-
-        if len(w1) > len(w2) and w1[:len(w2)] == w2:
-            print(-1)
-            return
-
-        min_len = min(len(w1), len(w2))
-        for j in range(min_len):
-            if w1[j] != w2[j]:
-                adj[w1[j]].append(w2[j])
-                in_deg[w1[j]] += 0
-                in_deg[w2[j]] += 1
-                break
-        idx += 1
-
-    for word in words:
-        for char in word:
-            unique_char.add(char)
-            in_deg[char] += 0
-
-    for char in in_deg:
-        if in_deg[char] == 0:
-            queue.append(char)
-
-    final_order = []
-    while queue:
-        queue = deque(sorted(queue))
-        node = queue.popleft()
-        final_order.append(node)
-
-        for neighbor in adj[node]:
-            in_deg[neighbor] -= 1
-            if in_deg[neighbor] == 0:
-                queue.append(neighbor)
-
-    if len(final_order) != len(unique_char):
-        print(-1)
+    dist[S][0] = 0
+    
+    nn = [(0, S, 0)]
+    
+    while nn:
+        d, u, k = heapq.heappop(nn)
+        
+        if dist[u][k] < d:
+            continue
+        
+        for v, w in graph[u]:
+            cost = d + w
+            
+            if cost < dist[v][0]:
+                dist[v][1] = dist[v][0]
+                dist[v][0] = cost
+                heapq.heappush(nn, (dist[v][0], v, 0))
+                heapq.heappush(nn, (dist[v][1], v, 1))
+                
+            elif dist[v][0] < cost < dist[v][1]:
+                dist[v][1] = cost
+                heapq.heappush(nn, (dist[v][1], v, 1))
+    
+    if dist[D][1] != float('inf'):
+        return dist[D][1]
     else:
-        print("".join(final_order))
+        return -1
 
-n = int(input())
-find_order(n)
+data = input().split()
+N, M, S, D = map(int, data[:4])
+edges = []
+for i in range(4, len(data), 3):
+    edge = (int(data[i]), int(data[i + 1]), int(data[i + 2]))
+    edges.append(edge)
+
+
+print(sec_short_path(N, M, S, D, edges))
