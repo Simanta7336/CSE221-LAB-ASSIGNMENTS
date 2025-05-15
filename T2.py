@@ -1,46 +1,48 @@
-import heapq
+import sys
+input = sys.stdin.readline
 
-def short_dis(N, graph, source):
-    dist = [float('inf')] * (N + 1)
-    dist[source] = 0
-    heap = [(0, source)]
+def get(prnt, x):
+    while prnt[x] != x:
+        prnt[x] = prnt[prnt[x]]  # Path compression
+        x = prnt[x]
+    return x
 
-    while heap:
-        cur_dist, u = heapq.heappop(heap)
+def uni(prnt, rnk, a, b):
+    rA = get(prnt, a)
+    rB = get(prnt, b)
+    if rA == rB:
+        return False
+    if rnk[rA] < rnk[rB]:
+        prnt[rA] = rB
+    elif rnk[rA] > rnk[rB]:
+        prnt[rB] = rA
+    else:
+        prnt[rB] = rA
+        rnk[rA] += 1
+    return True
 
-        if cur_dist > dist[u]:
-            continue
+def main():
+    N, M = map(int, input().split())
+    edges = []
+    for _ in range(M):
+        u, v, w = map(int, input().split())
+        edges.append((w, u, v))
 
-        for v, w in graph[u]:
-            if dist[v] > dist[u] + w:
-                dist[v] = dist[u] + w
-                heapq.heappush(heap, (dist[v], v))
+    edges.sort()
+    
+    prnt = [i for i in range(N + 1)]
+    rnk = [0] * (N + 1)
 
-    return dist
+    mst_cost = 0
+    used = 0
 
-N, M, S, T = map(int, input().split())
-graph={}
-for i in range(1,N+1):
-    graph[i]= []
+    for w, u, v in edges:
+        if uni(prnt, rnk, u, v):
+            mst_cost += w
+            used += 1
+            if used == N - 1:
+                break
 
-for i in range(M):
-    u, v, w = map(int, input().split())
-    graph[u].append((v, w))
+    print(mst_cost)
 
-distA = short_dis(N, graph, S)
-distB = short_dis(N, graph, T)
-
-min_time = float('inf')
-meeting_node = N+1
-
-for v in range(1, N + 1):
-    if distA[v] != float('inf') and distB[v] != float('inf'):
-        meet_time = max(distA[v], distB[v])
-        if meet_time < min_time or (meet_time == min_time and v < meeting_node):
-            min_time = meet_time
-            meeting_node = v
-
-if meeting_node == N+1:
-    print(-1)
-else:
-    print(f"{min_time} {meeting_node}")
+main()

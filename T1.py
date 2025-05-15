@@ -1,31 +1,35 @@
-from collections import deque
-N, M = map(int, input().split())
-graph={}
-in_deg=[0]*(N+1)
+import sys
+input = sys.stdin.readline
 
-for i in range(1,N+1):
-    graph[i]=[]
-for i in range (M):
-    n1, n2 = map(int, input().split())
-    graph[n1].append(n2)
-    in_deg[n2]+=1
-queue = deque()
-for i in range(1, N+1):
-    if in_deg[i] == 0:
-        queue.append(i)
+def find(prnt, x):
+    r = x
+    while prnt[r] != r:
+        r = prnt[r]
+    # Path compression
+    while x != r:
+        nxt_x = prnt[x]
+        prnt[x] = r
+        x = nxt_x
+    return r
 
-output = []
+def uni(prnt, size, a, b):
+    rA = find(prnt, a)
+    rB = find(prnt, b)
+    if rA != rB:
+        if size[rA] < size[rB]:
+            rA, rB = rB, rA
+        prnt[rB] = rA
+        size[rA] += size[rB]
+    return size[rA]
 
-while queue:
-    node = queue.popleft()
-    output.append(node)
-    for child in graph[node]:
-        in_deg[child] -= 1
-        if in_deg[child] == 0:
-            queue.append(child)
+def main():
+    N, K = map(int, input().split())
+    prnt = [i for i in range(N + 1)]
+    size = [1] * (N + 1)
 
-if len(output) == N:
-    for i in output:
-        print(i,end=" ")
-else:
-    print(-1)
+    for _ in range(K):
+        a, b = map(int, input().split())
+        print(uni(prnt, size, a, b))
+
+main()
+
