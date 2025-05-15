@@ -1,15 +1,27 @@
-def bubbleSort(arr):
-    n = len(arr)
-    for i in range(n - 1):
-        flag = False
-        for j in range(n - i - 1):
-            if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
-                flag = True
-        if flag==False:
-            break 
+def l_bound(arr, x):
+    l, r = 0, len(arr)
+    while l < r:
+        mid = (l + r) // 2
+        if arr[mid] < x:
+            l = mid + 1
+        else:
+            r = mid
+    return l
 
-N = int(input()) 
-arr = list(map(int, input().split()))  
-bubbleSort(arr) 
-print(" ".join(map(str, arr)))  
+def u_bound(arr, y):
+    l, r = 0, len(arr)
+    while l < r:
+        mid = (l + r) // 2
+        if arr[mid] <= y:
+            l = mid + 1
+        else:
+            r = mid
+    return l
+n, q = map(int, input().split())
+arr = list(map(int, input().split())) 
+
+for i in range(q):
+    x, y = map(int, input().split())
+    l = l_bound(arr, x)  
+    r = u_bound(arr, y)  
+    print(r - l) 

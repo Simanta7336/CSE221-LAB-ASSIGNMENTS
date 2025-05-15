@@ -1,7 +1,18 @@
-inp=input()
-inp1=input()
-inp_t=inp.split(" ")
-inp1_t=inp1.split(" ")
-for i in range((int(inp_t[1])-1),-1,-1):
-    print(inp1_t[i],end=" ")   
+N,K = map(int, input().split())
+lst= list(map(int, input().split()))
+    
+l = 0
+c_sum = 0
+max_l = 0
 
+for r in range(N):
+    c_sum += lst[r]
+
+    while c_sum > K: 
+        c_sum -= lst[l]
+        l += 1
+
+    max_l = max(max_l, r - l + 1) 
+
+print(max_l)
+ 
