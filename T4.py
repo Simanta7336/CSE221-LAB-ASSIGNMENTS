@@ -1,61 +1,29 @@
-from collections import deque
-
-def bfs(start, graph, N):
-    visited = []
-    distance = []
-    parent = []
-    for i in range(N+1):
-        visited.append(False)
-        distance.append(-1)
-        parent.append(-1)
+import sys
+sys.setrecursionlimit(2 * 10**5 + 5)
+input = sys.stdin.readline
     
-
-    queue = deque()
-    queue.append(start)
-    visited[start] = True
-    distance[start] = 0
-
-    while queue:
-        node = queue.popleft()
-        for child in graph[node]:
-            if not visited[child]:
-                visited[child] = True
-                distance[child] = distance[node] + 1
-                parent[child] = node
-                queue.append(child)
+N, R = map(int, input().strip().split())
+graph = [[] for _ in range(N + 1)]
     
-    return distance, parent
+for _ in range(N - 1):
+    u, v = map(int, input().strip().split())
+    graph[u].append(v)
+    graph[v].append(u)
+    
+s_size = [0] * (N + 1)
 
-N, M, S, D, K = map(int, input().split())
-graph={}
-for i in range(1,N+1):
-    graph[i]=[]
-for i in range (M):
-    n1, n2 = map(int, input().split())
-    graph[n1].append(n2)
+def dfs(node, parent):
+    s_size[node] = 1
+    for child in graph[node]:
+        if child != parent:
+            dfs(child, node)
+            s_size[node] += s_size[child]
 
-dist1, parent1 = bfs(S, graph, N)
+dfs(R, -1)
 
-dist2, parent2 = bfs(K, graph, N)
+Q = int(input().strip())
+for _ in range(Q):
+    inp = int(input().strip())
+    print(s_size[inp])
 
-if dist1[K] == -1 or dist2[D] == -1:
-    print(-1)
-else:
-    path1 = []
-    cur = K
-    while cur != -1:
-        path1.append(cur)
-        cur = parent1[cur]
-    path1.reverse()
 
-    path2 = []
-    cur = D
-    while cur != -1:
-        path2.append(cur)
-        cur = parent2[cur]
-    path2.reverse()
-    path2 = path2[1:] 
-
-    path = path1 + path2
-    print(len(path) - 1)
-    print(" ".join(map(str,path)))

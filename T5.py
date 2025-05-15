@@ -1,33 +1,35 @@
-import sys
-sys.setrecursionlimit(2*100000+5)
-N, M = map(int, input().split())
-graph = {}
-for i in range(1, N + 1):
-    graph[i] = []
-for i in range(M):
-    n1, n2 = map(int, input().split())
-    graph[n1].append(n2)
+from collections import deque
 
-color = {}
-for i in range(1, N + 1):
-    color[i] = 'W'  
+def bfs(initial, graph, n):
+    dist = [-1] * (n + 1)
+    dist[initial] = 0
+    q = deque()
+    q.append(initial)
+    end_node = initial
 
-def dfs(u , color):
-    color[u] = 'G'
-    for v in graph[u]:
-        if color[v] == 'W':
-            cycle= dfs(v,color)
-            if cycle == "YES":
-                return "YES"
-        elif color[v] == 'G':
-            return "YES"
-    color[u] = 'B'
-    return "NO"
+    while q:
+        node = q.popleft()
+        for v in graph[node]:
+            if dist[v] == -1:
+                dist[v] = dist[node] + 1
+                q.append(v)
+                if dist[v] > dist[end_node]:
+                    end_node = v
+    return end_node, dist[end_node]
 
-flag = "NO"
-for u in graph.keys():
-    if color[u] == 'W':
-        flag = dfs(u,color)
-        if flag == "YES":
-            break
-print(flag)
+n = int(input())
+graph = []
+for i in range(n + 1):
+    graph.append([])
+
+
+for i in range(n - 1):
+    u, v = map(int, input().split())
+    graph[u].append(v)
+    graph[v].append(u)
+
+node1, l = bfs(1, graph, n)
+node2, length = bfs(node1, graph, n)
+
+print(length)
+print(node1, node2)

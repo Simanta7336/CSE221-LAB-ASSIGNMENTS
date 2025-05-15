@@ -1,48 +1,38 @@
 from collections import deque
-N, M, S, D= map(int, input().split())
-graph={}
-for i in range(1,N+1):
-    graph[i]=[]
 
-arr1 = list(map(int, input().split()))    
-arr2 = list(map(int, input().split())) 
+n = int(input())
+x,y,x1,y1 = map(int,input().split())
 
-for i in range(M):
-    graph[arr1[i]].append(arr2[i])
-    graph[arr2[i]].append(arr1[i])
-
-for k,v in graph.items():
-    v.sort()
-visited = []
-distance=[]
-parent=[]
-for i in range(N+1):
-    visited.append(False)
-    distance.append(-1)
-    parent.append(-1)
+def knight(a,b,x1,y1,n):
+    if a == x1 and b == y1:
+        return 0
     
-queue = deque()
+    lst = [
+        (2, 1), (2, -1), (-2, 1), (-2, -1),
+        (1, 2), (1, -2), (-1, 2), (-1, -2)
+    ]
 
-queue.append(S)
-visited[S] = True
-distance[S]=0
-while queue:
-    node = queue.popleft()
-    for child in graph[node]:
-        if not visited[child]:
-            visited[child] = True
-            queue.append(child)
-            parent[child]=node
-            distance[child]=1+distance[node]
-if not visited[D]:
-    print(-1)
-else:
-    path=[]   
-    current= D 
-    while current != -1:
-        path.append(current)
-        current = parent[current]
-    path.reverse()
 
-    print(distance[D])
-    print(" ".join(map(str, path)))
+    queue = deque()
+    queue.append((a,b))
+    visited = [[-1] * (n + 1) for _ in range(n + 1)]
+    visited[a][b] = 0
+
+    while queue:
+        u = queue.popleft()
+        x,y = u
+        
+        
+        for nx,ny in lst:
+            i,j = x + nx , ny + y
+            if 1 <= i <= n and 1 <= j <= n and  visited[i][j]==-1:
+                visited[i][j] = visited[x][y]+1
+                if i==x1 and j==y1:
+                    return visited[i][j]
+                queue.append((i, j))
+    return -1
+
+print(knight(x,y,x1,y1,n))
+
+
+

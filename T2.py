@@ -1,30 +1,40 @@
-import sys
-sys.setrecursionlimit(2*100000+5)
-
+from collections import deque
 N, M = map(int, input().split())
 graph={}
 for i in range(1,N+1):
     graph[i]=[]
+for i in range (M):
+    n1, n2 = map(int, input().split())
+    graph[n1].append(n2)
+    graph[n2].append(n1)
 
-arr1 = list(map(int, input().split()))    
-arr2 = list(map(int, input().split())) 
+visited = [False] * (N + 1)
+color = [-1] * (N + 1)
 
-for i in range(M):
-    graph[arr1[i]].append(arr2[i])
-    graph[arr2[i]].append(arr1[i])
+def bfs(start):
+    queue = deque()
+    queue.append(start)
+    color[start] = 0
+    count = [1, 0]  
+    visited[start] = True
 
-visited = []
-for i in range(N+1):
-    visited.append(False)    
+    while queue:
+        node = queue.popleft()
+        for child in graph[node]:
+            if color[child] == -1:
+                color[child] = 1 - color[node]
+                count[color[child]] += 1
+                visited[child] = True
+                queue.append(child)
+
+    return max(count)
+
+result = 0
+for i in range(1, N + 1):
+    if not visited[i]:
+        result += bfs(i)
+
+print(result)
 
 
-def dfs(graph,node,visited):
-    visited[node] = True
-    print(node, end = " ")
-    for i in graph[node]:
-        if visited[i]==False:
-            dfs(graph,i,visited)
-
-
-dfs(graph,1,visited)
 

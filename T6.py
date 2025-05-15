@@ -1,38 +1,58 @@
-from collections import deque
+def find_order(n):
+    from collections import defaultdict, deque
 
-n, m = map(int, input().split())
+    adj = defaultdict(list)
+    in_deg = defaultdict(int)
+    queue = deque()
+    words = []
+    unique_char = set()
 
-lst = []
-for _ in range(n):
-    line = list(input())
-    lst.append(line)
+    for i in range(n):
+        cur_w = input()
+        words.append(cur_w)
 
-seen = [[False] * m for _ in range(n)]
+    idx = 0
+    while idx < n - 1:
+        w1 = words[idx]
+        w2 = words[idx + 1]
 
-def count_diamonds(board, seen, sx, sy):
-    q = deque()
-    q.append((sx, sy))
-    seen[sx][sy] = True
-    diamonds = 0
+        if len(w1) > len(w2) and w1[:len(w2)] == w2:
+            print(-1)
+            return
 
-    while q:
-        ux, uy = q.popleft()
+        min_len = min(len(w1), len(w2))
+        for j in range(min_len):
+            if w1[j] != w2[j]:
+                adj[w1[j]].append(w2[j])
+                in_deg[w1[j]] += 0
+                in_deg[w2[j]] += 1
+                break
+        idx += 1
 
-        if board[ux][uy] == 'D':
-            diamonds += 1
+    for word in words:
+        for char in word:
+            unique_char.add(char)
+            in_deg[char] += 0
 
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            vx, vy = ux + dx, uy + dy
-            if 0 <= vx < n and 0 <= vy < m and board[vx][vy] != '#' and not seen[vx][vy]:
-                seen[vx][vy] = True
-                q.append((vx, vy))
+    for char in in_deg:
+        if in_deg[char] == 0:
+            queue.append(char)
 
-    return diamonds
+    final_order = []
+    while queue:
+        queue = deque(sorted(queue))
+        node = queue.popleft()
+        final_order.append(node)
 
-max_found = 0
-for i in range(n):
-    for j in range(m):
-        if lst[i][j] != '#' and not seen[i][j]:
-            max_found = max(max_found, count_diamonds(lst, seen, i, j))
+        for neighbor in adj[node]:
+            in_deg[neighbor] -= 1
+            if in_deg[neighbor] == 0:
+                queue.append(neighbor)
 
-print(max_found)
+    if len(final_order) != len(unique_char):
+        print(-1)
+    else:
+        print("".join(final_order))
+
+n = int(input())
+find_order(n)
