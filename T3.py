@@ -1,18 +1,13 @@
-N,K = map(int, input().split())
-lst= list(map(int, input().split()))
-    
-l = 0
-c_sum = 0
-max_l = 0
+a,b = map(int,input().split())
+mod_val = 107
+rslt = 1
+a = a % mod_val
 
-for r in range(N):
-    c_sum += lst[r]
+while b > 0:
+    if b % 2 != 0: 
+        rslt = (rslt * a) % mod_val
+    a = (a**2) % mod_val
+    b = b//2 
 
-    while c_sum > K: 
-        c_sum -= lst[l]
-        l += 1
 
-    max_l = max(max_l, r - l + 1) 
-
-print(max_l)
- 
+print(rslt)

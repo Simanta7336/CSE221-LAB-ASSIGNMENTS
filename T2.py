@@ -1,27 +1,15 @@
-inp = int(input())
-alice_lst = list(map(int, input().split()))
+N = int(input())
+arr = list(map(int,input().split()))
 
-inp1 = int(input()) 
-bob_lst = list(map(int, input().split()))
+def max_pair(arr):
+    mx_val = float('-inf')
+    i = 0  
+    for j in range(1, len(arr)):
+        mx_val = max(mx_val, arr[i] + arr[j]**2)
+        val = max(arr[i], arr[j])
+        i = arr.index(val)
+    
+    return mx_val
 
-merged_lst = []
-i= 0
-j= 0
-
-while i < inp and j < inp1:
-    if alice_lst[i] <= bob_lst[j]:
-        merged_lst.append(alice_lst[i])
-        i+= 1
-    else:
-        merged_lst.append(bob_lst[j])
-        j+= 1
-
-while i < inp:
-    merged_lst.append(alice_lst[i])
-    i+= 1
-
-while j < inp1:
-    merged_lst.append(bob_lst[j])
-    j+= 1
-
-print(*merged_lst)
+rslt = max_pair(arr)
+print(rslt)

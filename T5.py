@@ -1,27 +1,12 @@
-def l_bound(arr, x):
-    l, r = 0, len(arr)
-    while l < r:
-        mid = (l + r) // 2
-        if arr[mid] < x:
-            l = mid + 1
-        else:
-            r = mid
-    return l
-
-def u_bound(arr, y):
-    l, r = 0, len(arr)
-    while l < r:
-        mid = (l + r) // 2
-        if arr[mid] <= y:
-            l = mid + 1
-        else:
-            r = mid
-    return l
-n, q = map(int, input().split())
-arr = list(map(int, input().split())) 
-
-for i in range(q):
-    x, y = map(int, input().split())
-    l = l_bound(arr, x)  
-    r = u_bound(arr, y)  
-    print(r - l) 
+def build_balanced_bst(arr, start, end, tree):
+    while start <= end:
+        mid = (start + end) // 2
+        tree.append(arr[mid])
+        build_balanced_bst(arr, start, mid - 1, tree)
+        start = mid + 1 
+size = int(input())
+arr = list(map(int, input().split()))
+start, end = 0, size - 1
+bst_structure = []
+build_balanced_bst(arr, start, end, bst_structure)
+print(*bst_structure)
